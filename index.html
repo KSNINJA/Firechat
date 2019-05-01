@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Firechat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body style="overflow: hidden;">
+    <section class="col-md-8 col-sm-12 column messaging-column bg-bluish-gray" style="display: none;">
+        <!--<hr id="network-indicator" style="margin: 0px;"> -->
+        <header class="col-md-8">
+            <i id="back-to-chat-lobby-from-chat" class='fas fa-arrow-left float-left rounded-circle' style="display: none;"></i>
+            <div id="messaging-chat-img" class="background-image-holder" style="height: 40px ;width: 40px;min-width:40px ; border-radius: 100%;background-image: url('images/default_group.jpg'); display: inline-block; vertical-align: middle; margin: auto 0px auto 0px;"></div>
+            <div style="margin: auto 30px auto 15px; overflow: hidden;">
+                <div id="messaging-chat-name" class="chat-name"></div>
+                <br>
+                <div id="messaging-chat-recipients"></div>
+            </div>
+        </header>
+        <div id="message-list" class="h-100 text-left overflow-scroll" style="padding-bottom: 100px;padding-top: 60px;background-color: rgb(243, 242, 244);">
+        </div>
+        <div class="col-md-8 text-center" id="type-message-div" style="display: flex;">
+            <input type="text" name="message" placeholder="Type a message" style="border-radius: 21px;height: 42px ; width: 100%; margin: auto 0px; border: none; padding: 9px 12px 11px 12px">
+            <div class="rounded-circle d-inline-block align-middle page-btn" style="height: 40px; width: 40px;padding: 5px; margin: auto 0px;">
+                <i class='material-icons d-inline' id='send-message-btn'>send</i>
+            </div>
+        </div>
+    </section>
+    <section id="chats-column" class="col-md-4 col-sm-12 column">
+        <header class="col-md-4">
+            <i id="new-chat-icon" class='far fa-edit float-right rounded-circle' style="margin: auto 0px auto auto;"></i>
+            <div class="dropdown" style="margin: auto 20px;">
+                <div data-toggle="dropdown">
+                    <i class='fas fa-angle-down rounded-circle'></i>
+                </div>
+                <div class="dropdown-menu" style="margin-left: -136px ; width: 60px;">
+                    <span class="dropdown-item" id="myProfile_btn">Profile</span>
+                    <span class="dropdown-item" id="logout_btn">Log out</span>
+                </div>
+            </div>
+        </header>
+        <div class="chat-lobby">
+        </div>
+    </section>
+    <section id="new-chat-column" class="col-md-4 col-sm-12 column" style="display: none;left: -100%;">
+        <header class="col-md-4">
+            <i id="back-to-chat-lobby-from-new-chat" class='fas fa-arrow-left float-left rounded-circle'></i>
+            <div class="chat-name">New Chat</div>
+        </header>
+        <div style="height: 50px; background-color: rgb(243, 242, 244); padding: 5px 10px; margin-top: 60px;">
+            <input type="text" id="new-chat-search-people" style="height: 100%; width: 100%; padding: 5px;" placeholder="Search people"></input>
+        </div>
+        <div id="new-chat-recipient-list" style="height: 100% ;max-height: 100%;  overflow-y: scroll; text-align: left;">
+            <div id="create-new-group" style="overflow: hidden; height: 70px; border-bottom: 1px solid rgba(0, 0, 0, 0.1);">
+                <i class="background-image-holder material-icons" style="height: 50px ;width:50px ; border-radius: 100%; display: inline-block; vertical-align: middle; margin: 10px; background-color: rgb(66, 133, 244); color: #fff;font-size: 35px; padding: 7px;">
+                    group_add
+                </i>
+                <span>New group</span>
+            </div>
+        </div>
+    </section>
+    <section id="new-group-column" class="col-md-4 col-sm-12 column" style="display: none;left: -100%;">
+        <header class="col-md-4">
+            <i id="back-to-chat-lobby-from-new-group" class='fas fa-arrow-left float-left rounded-circle' style="margin: auto;"></i>
+            <div class="chat-name">New Group</div>
+        </header>
+        <div id="selected-people" style="padding: 15px 25px; margin-top: 60px; height: 200px; text-align: left;border-bottom: 1px solid rgba(0, 0, 0, 0.1); overflow-y: scroll;">
+        </div>
+        <input type="text" id="new-group-search-people" style="width: 85%; padding: 5px;border: none; border-bottom: solid rgb(66, 133, 244);" placeholder="Search group recipients"></input>
+        <div id="new-group-recipient-list" style="height: 100% ;max-height: 100%;  overflow-y: scroll; text-align: left;margin-bottom: 100px;">
+        </div>
+        <div style="height: 100px; background-color: #fff;border-top: 1px solid rgba(0, 0, 0, 0.1); position: absolute; bottom: 0px; width: 100%; display: flex;">
+            <i id="selected-people-for-new-group-btn" class="material-icons" style="color: #fff; background-color: rgb(66, 133, 244);margin: auto; padding: 10px; border-radius: 100%; display: none;">arrow_forward</i>
+        </div>
+    </section>
+
+
+
+
+    <section id="new-group-column-select-name" class="col-md-4 col-sm-12 column" style="display: none;left: -100%;">
+        <header class="col-md-4">
+            <i id="back-to-chat-lobby-from-new-group-select-name" class='fas fa-arrow-left float-left rounded-circle' style="margin: auto;"></i>
+            <div class="chat-name">New Group</div>
+        </header>
+        <div style="height: 100% ;max-height: 100%;  overflow-y: scroll;padding-top: 60px;">
+            <input type="file" id="upload-new-group-img-btn">
+            <div class="background-image-holder" id="new-group-img"></div>
+            <div class="progress d-none" style="width: 80%;margin: 0px auto;">
+                <div id="upload-new-group-img-progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                </div>
+            </div>
+            <input type="text" id="new-group-name" style="width: 85%; padding: 5px;border: none; border-bottom: solid rgb(66, 133, 244);margin: 30px 0px 50px;" placeholder="Group Subject">
+            <div>
+                <i id="new-group-form-filled" class="material-icons" style="color: #fff; background-color: rgb(66, 133, 244);margin: auto; padding: 10px; border-radius: 100%; display: none;">done</i>
+            </div>
+        </div>
+        <input id="upload-new-group-img-by-drag-btn" type="file" style="position: absolute; height: 100%; width: 100%; opacity: 0; top: 0px; left: 0px;"></input>
+    </section>
+
+
+
+
+
+    <section id="myProfile-column" class="col-md-4 col-sm-12 column" style="display: none;left: -100%;background-color: #fff;">
+        <header class="col-md-4">
+            <i id="back-to-chat-lobby-from-myProfile" class='fas fa-arrow-left float-left rounded-circle' style="margin: auto 0px;"></i>
+        </header>
+        <div style="height: 100% ;max-height: 100%;  overflow-y: scroll;padding-top: 60px;">
+            <input type="file" id="upload-profile-img-btn">
+            <div class="background-image-holder" id="myprofile-img"></div>
+            <div class="progress d-none" style="width: 80%;margin: 0px auto;">
+                <div id="upload-profile-img-progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                </div>
+            </div>
+            <div id="profile-myname" style="background-color: rgb(243, 242, 244); padding: 30px;text-align: left;margin: 30px;">
+                <p style="font-size: 14px; color: rgb(66, 133, 244);">Your Name</p>
+                <div style="display: flex">
+                    <input type="text" style="font-size: 17px;display: inline-block;background: transparent; border: none;width: 100%;" disabled="true"></input>
+                    <i id='profile-myname-edit-btn' class="material-icons float-right" style="height: 24px;width: 24px;">mode_edit</i>
+                </div>
+            </div>
+            <p style="font-size: 14px; color: rgb(66, 133, 244);padding: 30px;">This is not your username or pin. This name will be visible to your contacts.</p>
+        </div>
+    </section>
+
+
+
+
+
+    <div id="firebaseui-auth-container">
+        <div id="login-header" class='text-center'>Welcome to Firechat</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="js/firebase_code.js"></script>
+    <script type="text/javascript" src="js/chatClass.js"></script>
+    <script type="text/javascript" src="js/messageClass.js"></script>
+    <script type="text/javascript" src="js/custom.js"></script>
+</body>
+
+</html>
